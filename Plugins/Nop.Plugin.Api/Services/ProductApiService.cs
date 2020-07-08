@@ -60,7 +60,13 @@ namespace Nop.Plugin.Api.Services
 
             return _productRepository.Table.FirstOrDefault(product => product.Id == productId && !product.Deleted);
         }
+        public Product GetProductBySKU(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
 
+            return _productRepository.Table.FirstOrDefault(product => product.Sku == id && !product.Deleted);
+        }
         public Product GetProductByIdNoTracking(int productId)
         {
             if (productId == 0)
