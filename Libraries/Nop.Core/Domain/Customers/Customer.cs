@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Common;
@@ -27,7 +27,10 @@ namespace Nop.Core.Domain.Customers
         /// Gets or sets the customer GUID
         /// </summary>
         public Guid CustomerGuid { get; set; }
-
+        /// <summary>
+        /// Gets or sets the Account Number
+        /// </summary>
+        public string AccountNum { get; set; }
         /// <summary>
         /// Gets or sets the username
         /// </summary>

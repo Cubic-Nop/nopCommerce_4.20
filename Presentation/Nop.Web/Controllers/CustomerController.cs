@@ -722,9 +722,12 @@ namespace Nop.Web.Controllers
                     _customerSettings.DefaultPasswordFormat,
                     _storeContext.CurrentStore.Id,
                     isApproved);
-                var registrationResult = _customerRegistrationService.RegisterCustomer(registrationRequest);
+                var registrationResult = _customerRegistrationService.RegisterCustomer(registrationRequest, out var accountNumber);
                 if (registrationResult.Success)
                 {
+                    //CustomerAccountNum = accountNumber;
+                    //CustomerName = model.FirstName + " " + model.LastName;
+
                     //properties
                     if (_dateTimeSettings.AllowCustomersToSetTimeZone)
                     {

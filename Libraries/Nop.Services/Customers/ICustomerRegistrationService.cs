@@ -1,4 +1,4 @@
-using Nop.Core.Domain.Customers;
+﻿using Nop.Core.Domain.Customers;
 
 namespace Nop.Services.Customers
 {
@@ -20,7 +20,7 @@ namespace Nop.Services.Customers
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        CustomerRegistrationResult RegisterCustomer(CustomerRegistrationRequest request);
+        CustomerRegistrationResult RegisterCustomer(CustomerRegistrationRequest request, out string accountNumber);
 
         /// <summary>
         /// Change password

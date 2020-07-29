@@ -11,6 +11,8 @@ namespace Nop.Plugin.Api.DTOs.Customers
 
         [JsonProperty("customer_guid")]
         public Guid CustomerGuid { get; set; }
+        [JsonProperty("accountNum")]
+        public string AccountNum { get; set; }
 
         [JsonProperty("username")]
         public string Username { get; set; }

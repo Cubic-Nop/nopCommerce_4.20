@@ -158,7 +158,7 @@ namespace Nop.Services.Authentication.External
                 registrationIsApproved);
 
             //whether registration request has been completed successfully
-            var registrationResult = _customerRegistrationService.RegisterCustomer(registrationRequest);
+            var registrationResult = _customerRegistrationService.RegisterCustomer(registrationRequest, out string _);
             if (!registrationResult.Success)
                 return ErrorAuthentication(registrationResult.Errors, returnUrl);
 

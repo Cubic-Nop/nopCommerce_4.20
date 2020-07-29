@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Linq;
+using System.Text;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Common;
@@ -160,8 +161,9 @@ namespace Nop.Services.Customers
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        public virtual CustomerRegistrationResult RegisterCustomer(CustomerRegistrationRequest request)
+        public virtual CustomerRegistrationResult RegisterCustomer(CustomerRegistrationRequest request, out string accountNumber)
         {
+            accountNumber = "";
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
@@ -227,7 +229,13 @@ namespace Nop.Services.Customers
             //at this point request is valid
             request.Customer.Username = request.Username;
             request.Customer.Email = request.Email;
-
+            int zeros = (5 - (request.Customer.Id.ToString().Length));
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < zeros; i++)
+            {
+                stringBuilder.Append("0");
+            }
+            request.Customer.AccountNum = accountNumber = "Worx_E" + stringBuilder + request.Customer.Id;
             var customerPassword = new CustomerPassword
             {
                 Customer = request.Customer,
