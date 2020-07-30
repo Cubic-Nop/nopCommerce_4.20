@@ -23,7 +23,7 @@ using Nop.Services.Stores;
 
 namespace Nop.Plugin.Api.Controllers
 {
-    [ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class NewsLetterSubscriptionController : BaseApiController
     {
         private readonly INewsLetterSubscriptionApiService _newsLetterSubscriptionApiService;

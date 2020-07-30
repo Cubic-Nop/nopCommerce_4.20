@@ -25,7 +25,7 @@ using System.Net;
 
 namespace Nop.Plugin.Api.Controllers
 {
-    [ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProductSpecificationAttributesController : BaseApiController
     {
         private readonly ISpecificationAttributeService _specificationAttributeService;

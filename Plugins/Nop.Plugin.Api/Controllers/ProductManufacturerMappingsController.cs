@@ -27,7 +27,7 @@ namespace Nop.Plugin.Api.Controllers
     using DTOs.Errors;
     using JSON.Serializers;
 
-    [ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProductManufacturerMappingsController : BaseApiController
     {
         private readonly IProductManufacturerMappingsApiService _productManufacturerMappingsService;

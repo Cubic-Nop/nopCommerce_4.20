@@ -11,12 +11,12 @@ namespace Nop.Plugin.Api.DTOs.Vendors
             Vendors = new List<VendorDto>();
         }
 
-        [JsonProperty("Vendors")]
+        [JsonProperty("vendors")]
         public IList<VendorDto> Vendors { get; set; }
 
         public string GetPrimaryPropertyName()
         {
-            return "Vendors";
+            return "vendors";
         }
 
         public Type GetPrimaryPropertyType()

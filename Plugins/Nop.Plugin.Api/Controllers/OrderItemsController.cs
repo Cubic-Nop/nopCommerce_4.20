@@ -31,8 +31,8 @@ using Nop.Services.Tax;
 
 namespace Nop.Plugin.Api.Controllers
 {
-    [ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme,
-        AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme,
+    //    AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrderItemsController : BaseApiController
     {
         private readonly IDTOHelper _dtoHelper;

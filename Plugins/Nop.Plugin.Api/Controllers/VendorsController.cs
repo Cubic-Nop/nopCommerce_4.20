@@ -33,6 +33,7 @@ namespace Nop.Plugin.Api.Controllers
     using JSON.Serializers;
     using Nop.Services.Vendors;
     using Nop.Core.Domain.Vendors;
+    using Nop.Core.Domain.Media;
 
     //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class VendorsController : BaseApiController
@@ -102,15 +103,15 @@ namespace Nop.Plugin.Api.Controllers
                                                                         parameters.UpdatedAtMax, parameters.Limit, parameters.Page, parameters.SinceId, parameters.CategoryId,
                                                                         parameters.VendorName, parameters.PublishedStatus)
                                                 .Where(p => StoreMappingService.Authorize(p));
-            
-            IList<VendorDto> VendorsAsDtos = allVendors.Select(Vendor => _dtoHelper.PrepareVendorDTO(Vendor)).ToList();
 
-            var VendorsRootObject = new VendorsRootObjectDto()
+            IList<VendorDto> vendorsAsDtos = allVendors.Select(vendor => _dtoHelper.PrepareVendorDTO(vendor)).ToList();
+
+            var vendorsRootObject = new VendorsRootObjectDto()
             {
-                Vendors = VendorsAsDtos
+                Vendors = vendorsAsDtos
             };
 
-            var json = JsonFieldsSerializer.Serialize(VendorsRootObject, parameters.Fields);
+            var json = JsonFieldsSerializer.Serialize(vendorsRootObject, parameters.Fields);
 
             return new RawJsonActionResult(json);
         }
@@ -132,12 +133,12 @@ namespace Nop.Plugin.Api.Controllers
                                                                        parameters.UpdatedAtMax, parameters.PublishedStatus, parameters.VendorName,
                                                                        parameters.CategoryId);
 
-            var VendorsCountRootObject = new VendorsCountRootObject()
+            var vendorsCountRootObject = new VendorsCountRootObject()
             {
                 Count = allVendorsCount
             };
 
-            return Ok(VendorsCountRootObject);
+            return Ok(vendorsCountRootObject);
         }
 
         /// <summary>
@@ -162,20 +163,20 @@ namespace Nop.Plugin.Api.Controllers
                 return Error(HttpStatusCode.BadRequest, "id", "invalid id");
             }
 
-            var Vendor = _vendorApiService.GetVendorById(id);
+            var vendor = _vendorApiService.GetVendorById(id);
 
-            if (Vendor == null)
+            if (vendor == null)
             {
                 return Error(HttpStatusCode.NotFound, "Vendor", "not found");
             }
 
-            var VendorDto = _dtoHelper.PrepareVendorDTO(Vendor);
+            var vendorDto = _dtoHelper.PrepareVendorDTO(vendor);
 
-            var VendorsRootObject = new VendorsRootObjectDto();
+            var vendorsRootObject = new VendorsRootObjectDto();
 
-            VendorsRootObject.Vendors.Add(VendorDto);
+            vendorsRootObject.Vendors.Add(vendorDto);
 
-            var json = JsonFieldsSerializer.Serialize(VendorsRootObject, fields);
+            var json = JsonFieldsSerializer.Serialize(vendorsRootObject, fields);
 
             return new RawJsonActionResult(json);
         }
@@ -185,21 +186,38 @@ namespace Nop.Plugin.Api.Controllers
         [ProducesResponseType(typeof(VendorsRootObjectDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ErrorsRootObject), 422)]
-        public IActionResult CreateVendor([ModelBinder(typeof(JsonModelBinder<VendorDto>))] Delta<VendorDto> VendorDelta)
+        public IActionResult CreateVendor([ModelBinder(typeof(JsonModelBinder<VendorDto>))] Delta<VendorDto> vendorDelta)
         {
             // Here we display the errors if the validation has failed at some point.
             if (!ModelState.IsValid)
             {
                 return Error();
             }
+            //If the validation has passed the manufacturerDelta object won't be null for sure so we don't need to check for this.
 
+            Picture insertedPicture = null;
+
+            // We need to insert the picture before the manufacturer so we can obtain the picture id and map it to the manufacturer.
+            if (vendorDelta.Dto.Image != null && vendorDelta.Dto.Image.Binary != null)
+            {
+                insertedPicture = PictureService.InsertPicture(vendorDelta.Dto.Image.Binary, vendorDelta.Dto.Image.MimeType, string.Empty);
+            }
+
+            var vendor = _factory.Initialize();
             // Inserting the new Vendor
-            var Vendor = _factory.Initialize();
-            VendorDelta.Merge(Vendor);
+            vendorDelta.Merge(vendor);
 
-            _vendorService.InsertVendor(Vendor);
+            // Inserting the new manufacturer
 
-            //UpdateVendorPictures(Vendor, VendorDelta.Dto.Images);
+            if (insertedPicture != null)
+            {
+                vendor.PictureId = insertedPicture.Id;
+            }
+
+            vendor.Id = 0;
+            _vendorService.InsertVendor(vendor);
+
+
 
             //UpdateVendorTags(Vendor, VendorDelta.Dto.Tags);
 
@@ -216,20 +234,20 @@ namespace Nop.Plugin.Api.Controllers
             //UpdateDiscountMappings(Vendor, VendorDelta.Dto.DiscountIds);
 
             //UpdateStoreMappings(Vendor, VendorDelta.Dto.StoreIds);
-           
-            _vendorService.UpdateVendor(Vendor);
+
+            //_vendorService.UpdateVendor(vendor);
 
             CustomerActivityService.InsertActivity("AddNewVendor",
-                LocalizationService.GetResource("ActivityLog.AddNewVendor"), Vendor);
+                LocalizationService.GetResource("ActivityLog.AddNewVendor"), vendor);
 
             // Preparing the result dto of the new Vendor
-            var VendorDto = _dtoHelper.PrepareVendorDTO(Vendor);
+            var vendorDto = _dtoHelper.PrepareVendorDTO(vendor);
 
-            var VendorsRootObject = new VendorsRootObjectDto();
+            var vendorsRootObject = new VendorsRootObjectDto();
 
-            VendorsRootObject.Vendors.Add(VendorDto);
+            vendorsRootObject.Vendors.Add(vendorDto);
 
-            var json = JsonFieldsSerializer.Serialize(VendorsRootObject, string.Empty);
+            var json = JsonFieldsSerializer.Serialize(vendorsRootObject, string.Empty);
 
             return new RawJsonActionResult(json);
         }
@@ -241,7 +259,7 @@ namespace Nop.Plugin.Api.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorsRootObject), 422)]
         [ProducesResponseType(typeof(ErrorsRootObject), (int)HttpStatusCode.BadRequest)]
-        public IActionResult UpdateVendor([ModelBinder(typeof(JsonModelBinder<VendorDto>))] Delta<VendorDto> VendorDelta)
+        public IActionResult UpdateVendor([ModelBinder(typeof(JsonModelBinder<VendorDto>))] Delta<VendorDto> vendorDelta)
         {
             // Here we display the errors if the validation has failed at some point.
             if (!ModelState.IsValid)
@@ -249,17 +267,18 @@ namespace Nop.Plugin.Api.Controllers
                 return Error();
             }
 
-            var Vendor = _vendorApiService.GetVendorById(VendorDelta.Dto.Id);
+            var vendor = _vendorApiService.GetVendorById(vendorDelta.Dto.Id);
 
-            if (Vendor == null)
+            if (vendor == null)
             {
                 return Error(HttpStatusCode.NotFound, "Vendor", "not found");
             }
 
-            VendorDelta.Merge(Vendor);
+            vendorDelta.Merge(vendor);
 
             //Vendor.UpdatedOnUtc = DateTime.UtcNow;
-            _vendorService.UpdateVendor(Vendor);
+            _vendorService.UpdateVendor(vendor);
+            UpdatePicture(vendor, vendorDelta.Dto.Image);
 
             //UpdateVendorAttributes(Vendor, VendorDelta);
 
@@ -284,19 +303,19 @@ namespace Nop.Plugin.Api.Controllers
 
             //UpdateAclRoles(Vendor, VendorDelta.Dto.RoleIds);
 
-            _vendorService.UpdateVendor(Vendor);
+            _vendorService.UpdateVendor(vendor);
 
             CustomerActivityService.InsertActivity("UpdateVendor",
-               LocalizationService.GetResource("ActivityLog.UpdateVendor"), Vendor);
+               LocalizationService.GetResource("ActivityLog.UpdateVendor"), vendor);
 
             // Preparing the result dto of the new Vendor
-            var VendorDto = _dtoHelper.PrepareVendorDTO(Vendor);
+            var vendorDto = _dtoHelper.PrepareVendorDTO(vendor);
 
-            var VendorsRootObject = new VendorsRootObjectDto();
+            var vendorsRootObject = new VendorsRootObjectDto();
 
-            VendorsRootObject.Vendors.Add(VendorDto);
+            vendorsRootObject.Vendors.Add(vendorDto);
 
-            var json = JsonFieldsSerializer.Serialize(VendorsRootObject, string.Empty);
+            var json = JsonFieldsSerializer.Serialize(vendorsRootObject, string.Empty);
 
             return new RawJsonActionResult(json);
         }
@@ -314,62 +333,50 @@ namespace Nop.Plugin.Api.Controllers
                 return Error(HttpStatusCode.BadRequest, "id", "invalid id");
             }
 
-            var Vendor = _vendorApiService.GetVendorById(id);
+            var vendor = _vendorApiService.GetVendorById(id);
 
-            if (Vendor == null)
+            if (vendor == null)
             {
                 return Error(HttpStatusCode.NotFound, "Vendor", "not found");
             }
 
-            _vendorService.DeleteVendor(Vendor);
+            _vendorService.DeleteVendor(vendor);
 
             //activity log
             CustomerActivityService.InsertActivity("DeleteVendor",
-                string.Format(LocalizationService.GetResource("ActivityLog.DeleteVendor"), Vendor.Name), Vendor);
+                string.Format(LocalizationService.GetResource("ActivityLog.DeleteVendor"), vendor.Name), vendor);
 
             return new RawJsonActionResult("{}");
         }
 
-        //private void UpdateVendorPictures(Vendor entityToUpdate, List<ImageMappingDto> setPictures)
+        //private void UpdateVendorPictures(Vendor entityToUpdate, ImageDto setPic)
         //{
         //    // If no pictures are specified means we don't have to update anything
-        //    if (setPictures == null)
+        //    if (setPic == null)
         //        return;
 
-        //    // delete unused Vendor pictures
-        //    var unusedVendorPictures = entityToUpdate.VendorPictures.Where(x => setPictures.All(y => y.Id != x.Id)).ToList();
-        //    foreach (var unusedVendorPicture in unusedVendorPictures)
+        //    if (setPic.Id > 0)
         //    {
-        //        var picture = PictureService.GetPictureById(unusedVendorPicture.PictureId);
-        //        if (picture == null)
-        //            throw new ArgumentException("No picture found with the specified id");
-        //        PictureService.DeletePicture(picture);
+        //        // update existing Vendor picture
+        //        var vendorPictureToUpdate = entityToUpdate.VendorPictures.FirstOrDefault(x => x.Id == imageDto.Id);
+        //        if (VendorPictureToUpdate != null && imageDto.Position > 0)
+        //        {
+        //            VendorPictureToUpdate.DisplayOrder = imageDto.Position;
+        //            _VendorService.UpdateVendorPicture(VendorPictureToUpdate);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // add new Vendor picture
+        //        var newPicture = PictureService.InsertPicture(imageDto.Binary, imageDto.MimeType, string.Empty);
+        //        _VendorService.InsertVendorPicture(new VendorPicture()
+        //        {
+        //            PictureId = newPicture.Id,
+        //            VendorId = entityToUpdate.Id,
+        //            DisplayOrder = imageDto.Position
+        //        });
         //    }
 
-        //    foreach (var imageDto in setPictures)
-        //    {
-        //        if (imageDto.Id > 0)
-        //        {
-        //            // update existing Vendor picture
-        //            var VendorPictureToUpdate = entityToUpdate.VendorPictures.FirstOrDefault(x => x.Id == imageDto.Id);
-        //            if (VendorPictureToUpdate != null && imageDto.Position > 0)
-        //            {
-        //                VendorPictureToUpdate.DisplayOrder = imageDto.Position;
-        //                _VendorService.UpdateVendorPicture(VendorPictureToUpdate);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // add new Vendor picture
-        //            var newPicture = PictureService.InsertPicture(imageDto.Binary, imageDto.MimeType, string.Empty);
-        //            _VendorService.InsertVendorPicture(new VendorPicture()
-        //            {
-        //                PictureId = newPicture.Id,
-        //                VendorId = entityToUpdate.Id,
-        //                DisplayOrder = imageDto.Position
-        //            });
-        //        }
-        //    }
         //}
 
         //private void UpdateVendorAttributes(Vendor entityToUpdate, Delta<VendorDto> VendorDtoDelta)
@@ -397,7 +404,7 @@ namespace Nop.Plugin.Api.Controllers
         //            if (VendorAttributeMappingToUpdate != null)
         //            {
         //                VendorDtoDelta.Merge(VendorAttributeMappingDto,VendorAttributeMappingToUpdate,false);
-                       
+
         //                _VendorAttributeService.UpdateVendorAttributeMapping(VendorAttributeMappingToUpdate);
 
         //                UpdateVendorAttributeValues(VendorAttributeMappingDto, VendorDtoDelta);
@@ -551,7 +558,7 @@ namespace Nop.Plugin.Api.Controllers
         //    _VendorService.UpdateVendor(Vendor);
         //    _VendorService.UpdateHasDiscountsApplied(Vendor);
         //}
-        
+
         //private void UpdateVendorManufacturers(Vendor Vendor, List<int> passedManufacturerIds)
         //{
         //    // If no manufacturers specified then there is nothing to map 
@@ -606,5 +613,40 @@ namespace Nop.Plugin.Api.Controllers
         //        _VendorService.UpdateVendor(newAssociatedVendor);
         //    }
         //}
+        private void UpdatePicture(Vendor vendor, ImageDto imageDto)
+        {
+            // no image specified then do nothing
+            if (imageDto == null)
+                return;
+
+            Picture updatedPicture;
+            var currentManufacturerPicture = PictureService.GetPictureById(vendor.PictureId);
+
+            // when there is a picture set for the manufacturer
+            if (currentManufacturerPicture != null)
+            {
+                PictureService.DeletePicture(currentManufacturerPicture);
+
+                // When the image attachment is null or empty.
+                if (imageDto.Binary == null)
+                {
+                    vendor.PictureId = 0;
+                }
+                else
+                {
+                    updatedPicture = PictureService.InsertPicture(imageDto.Binary, imageDto.MimeType, string.Empty);
+                    vendor.PictureId = updatedPicture.Id;
+                }
+            }
+            // when there isn't a picture set for the manufacturer
+            else
+            {
+                if (imageDto.Binary != null)
+                {
+                    updatedPicture = PictureService.InsertPicture(imageDto.Binary, imageDto.MimeType, string.Empty);
+                    vendor.PictureId = updatedPicture.Id;
+                }
+            }
+        }
     }
 }

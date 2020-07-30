@@ -761,6 +761,10 @@ namespace Nop.Services.Media
             if (validateBinary)
                 pictureBinary = ValidatePicture(pictureBinary, mimeType);
 
+            if (mimeType == "application/octet-stream")
+            {
+                mimeType = "image/jpeg";
+            }
             var picture = new Picture
             {
                 MimeType = mimeType,
@@ -850,6 +854,7 @@ namespace Nop.Services.Media
                         contentType = MimeTypes.ImageTiff;
                         break;
                     default:
+                        contentType = MimeTypes.ImageJpeg;
                         break;
                 }
             }
@@ -896,7 +901,10 @@ namespace Nop.Services.Media
             //delete old thumbs if a picture has been changed
             if (seoFilename != picture.SeoFilename)
                 DeletePictureThumbs(picture);
-
+            if (mimeType == "application/octet-stream")
+            {
+                mimeType = "image/jpeg";
+            }
             picture.MimeType = mimeType;
             picture.SeoFilename = seoFilename;
             picture.AltAttribute = altAttribute;
