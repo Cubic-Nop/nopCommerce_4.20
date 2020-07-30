@@ -8,10 +8,10 @@ namespace Nop.Plugin.Api.Models.ProductsParameters
     using Microsoft.AspNetCore.Mvc;
 
     // JsonProperty is used only for swagger
-    [ModelBinder(typeof(ParametersModelBinder<ProductsParametersModel>))]
-    public class ProductsParametersModel : BaseProductsParametersModel
+    [ModelBinder(typeof(ParametersModelBinder<VendorsParametersModel>))]
+    public class VendorsParametersModel : BaseVendorsParametersModel
     {
-        public ProductsParametersModel()
+        public VendorsParametersModel()
         {
             Ids = null;
             Limit = Configurations.DefaultLimit;

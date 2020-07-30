@@ -29,6 +29,8 @@ using Nop.Services.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nop.Plugin.Api.DTOs.Vendors;
+using Nop.Core.Domain.Vendors;
 
 namespace Nop.Plugin.Api.Helpers
 {
@@ -274,7 +276,7 @@ namespace Nop.Plugin.Api.Helpers
         {
             if (productDto.ProductAttributeMappings == null)
             {
-                productDto.ProductAttributeMappings = new List<ProductAttributeMappingDto>();
+                productDto.ProductAttributeMappings = new List<DTOs.Products.VendorAttributeMappingDto>();
             }
 
             foreach (var productAttributeMapping in productAttributeMappings)
@@ -289,14 +291,14 @@ namespace Nop.Plugin.Api.Helpers
             }
         }
 
-        private ProductAttributeMappingDto PrepareProductAttributeMappingDto(
+        private DTOs.Products.VendorAttributeMappingDto PrepareProductAttributeMappingDto(
             ProductAttributeMapping productAttributeMapping)
         {
-            ProductAttributeMappingDto productAttributeMappingDto = null;
+            DTOs.Products.VendorAttributeMappingDto productAttributeMappingDto = null;
 
             if (productAttributeMapping != null)
             {
-                productAttributeMappingDto = new ProductAttributeMappingDto
+                productAttributeMappingDto = new DTOs.Products.VendorAttributeMappingDto
                 {
                     Id = productAttributeMapping.Id,
                     ProductAttributeId = productAttributeMapping.ProductAttributeId,
@@ -315,10 +317,10 @@ namespace Nop.Plugin.Api.Helpers
             return productAttributeMappingDto;
         }
 
-        private ProductAttributeValueDto PrepareProductAttributeValueDto(ProductAttributeValue productAttributeValue,
+        private DTOs.Products.VendorAttributeValueDto PrepareProductAttributeValueDto(ProductAttributeValue productAttributeValue,
             Product product)
         {
-            ProductAttributeValueDto productAttributeValueDto = null;
+            DTOs.Products.VendorAttributeValueDto productAttributeValueDto = null;
 
             if (productAttributeValue != null)
             {
@@ -347,11 +349,11 @@ namespace Nop.Plugin.Api.Helpers
 
             return productAttributeValueDto;
         }
-       
+
         private void PrepareProductAttributeCombinations(IEnumerable<ProductAttributeCombination> productAttributeCombinations,
             ProductDto productDto)
         {
-            productDto.ProductAttributeCombinations = productDto.ProductAttributeCombinations ?? new List<ProductAttributeCombinationDto>();
+            productDto.ProductAttributeCombinations = productDto.ProductAttributeCombinations ?? new List<DTOs.Products.VendorAttributeCombinationDto>();
 
             foreach (var productAttributeCombination in productAttributeCombinations)
             {
@@ -363,7 +365,7 @@ namespace Nop.Plugin.Api.Helpers
             }
         }
 
-        private ProductAttributeCombinationDto PrepareProductAttributeCombinationDto(ProductAttributeCombination productAttributeCombination)
+        private DTOs.Products.VendorAttributeCombinationDto PrepareProductAttributeCombinationDto(ProductAttributeCombination productAttributeCombination)
         {
             return productAttributeCombination.ToDto();
         }
@@ -393,7 +395,7 @@ namespace Nop.Plugin.Api.Helpers
         {
             return specificationAttribute.ToDto();
         }
-        
+
         public ManufacturerDto PrepareManufacturerDto(Manufacturer manufacturer)
         {
             var manufacturerDto = manufacturer.ToDto();
@@ -428,6 +430,42 @@ namespace Nop.Plugin.Api.Helpers
             }
 
             return manufacturerDto;
+        }
+
+        public VendorDto PrepareVendorDTO(Vendor vendor)
+        {
+            var picture = _pictureService.GetPictureById(vendor.PictureId);
+            var imageDto = PrepareImageDto(picture);
+            //if (imageDto != null)
+            //{
+            //    manufacturerDto.Image = imageDto;
+            //}
+            return new VendorDto()
+            {
+                Active = vendor.Active,
+                Image = imageDto ?? null,
+                VendorNotes = vendor.VendorNotes.Select(l => new VendorNoteDto()
+                {
+                    CreatedOnUtc = l.CreatedOnUtc,
+                    Id = l.Id,
+                    Note = l.Note
+                }).ToList(),
+                Id = vendor.Id,
+                AdminComment = vendor.AdminComment,
+                Addresses = new List<DTOs.AddressDto>(),
+                AllowCustomersToSelectPageSize = vendor.AllowCustomersToSelectPageSize,
+                Description = vendor.Description,
+                DisplayOrder = vendor.DisplayOrder,
+                Email = vendor.Email,
+                MetaDescription = vendor.MetaDescription,
+                MetaKeywords = vendor.MetaKeywords,
+                MetaTitle = vendor.MetaTitle,
+                Name = vendor.Name,
+                PageSize = vendor.PageSize,
+                PageSizeOptions = vendor.PageSizeOptions,
+                PictureId = vendor.PictureId
+
+            };
         }
     }
 }

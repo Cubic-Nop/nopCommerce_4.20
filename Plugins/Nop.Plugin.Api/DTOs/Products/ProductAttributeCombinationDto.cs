@@ -5,7 +5,7 @@ using Nop.Plugin.Api.Validators;
 namespace Nop.Plugin.Api.DTOs.Products
 {
     [JsonObject(Title = "product_attribute_combination")]
-    public class ProductAttributeCombinationDto : BaseDto
+    public class VendorAttributeCombinationDto : BaseDto
     {
         /// <summary>
         /// Gets or sets the product identifier

@@ -8,9 +8,9 @@ namespace Nop.Plugin.Api.DTOs.Products
 {
     [JsonObject(Title = "attribute")]
     //[Validator(typeof(ProductDtoValidator))]
-    public class ProductAttributeMappingDto : BaseDto
+    public class VendorAttributeMappingDto : BaseDto
     {
-        private List<ProductAttributeValueDto> _productAttributeValues;
+        private List<VendorAttributeValueDto> _productAttributeValues;
 
         /// <summary>
         /// Gets or sets the product attribute identifier
@@ -75,7 +75,7 @@ namespace Nop.Plugin.Api.DTOs.Products
         /// Gets the product attribute values
         /// </summary>
         [JsonProperty("attribute_values")]
-        public List<ProductAttributeValueDto> ProductAttributeValues
+        public List<VendorAttributeValueDto> ProductAttributeValues
         {
             get { return _productAttributeValues; }
             set { _productAttributeValues = value; }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Nop.Plugin.Api.Validators
 {
-    public class ProductAttributeCombinationDtoValidator : BaseDtoValidator<ProductAttributeCombinationDto>
+    public class ProductAttributeCombinationDtoValidator : BaseDtoValidator<VendorAttributeCombinationDto>
     {
 
         #region Constructors

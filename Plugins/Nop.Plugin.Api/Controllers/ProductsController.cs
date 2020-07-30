@@ -84,7 +84,7 @@ namespace Nop.Plugin.Api.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ErrorsRootObject), (int)HttpStatusCode.BadRequest)]
         [GetRequestsErrorInterceptorActionFilter]
-        public IActionResult GetProducts(ProductsParametersModel parameters)
+        public IActionResult GetProducts(VendorsParametersModel parameters)
         {
             if (parameters.Limit < Configurations.MinLimit || parameters.Limit > Configurations.MaxLimit)
             {
@@ -120,17 +120,17 @@ namespace Nop.Plugin.Api.Controllers
         /// <response code="401">Unauthorized</response>
         [HttpGet]
         [Route("/api/products/count")]
-        [ProducesResponseType(typeof(ProductsCountRootObject), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(VendorsCountRootObject), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ErrorsRootObject), (int)HttpStatusCode.BadRequest)]
         [GetRequestsErrorInterceptorActionFilter]
-        public IActionResult GetProductsCount(ProductsCountParametersModel parameters)
+        public IActionResult GetProductsCount(VendorsCountParametersModel parameters)
         {
             var allProductsCount = _productApiService.GetProductsCount(parameters.CreatedAtMin, parameters.CreatedAtMax, parameters.UpdatedAtMin,
                                                                        parameters.UpdatedAtMax, parameters.PublishedStatus, parameters.VendorName,
                                                                        parameters.CategoryId);
 
-            var productsCountRootObject = new ProductsCountRootObject()
+            var productsCountRootObject = new VendorsCountRootObject()
             {
                 Count = allProductsCount
             };
@@ -485,7 +485,7 @@ namespace Nop.Plugin.Api.Controllers
             }
         }
 
-        private void UpdateProductAttributeValues(ProductAttributeMappingDto productAttributeMappingDto, Delta<ProductDto> productDtoDelta)
+        private void UpdateProductAttributeValues(VendorAttributeMappingDto productAttributeMappingDto, Delta<ProductDto> productDtoDelta)
         {
             // If no product attribute values are specified means we don't have to update anything
             if (productAttributeMappingDto.ProductAttributeValues == null)

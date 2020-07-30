@@ -11,9 +11,9 @@ namespace Nop.Plugin.Api.MappingExtensions
             return product.MapTo<Product, ProductDto>();
         }
 
-        public static ProductAttributeValueDto ToDto(this ProductAttributeValue productAttributeValue)
+        public static VendorAttributeValueDto ToDto(this ProductAttributeValue productAttributeValue)
         {
-            return productAttributeValue.MapTo<ProductAttributeValue, ProductAttributeValueDto>();
+            return productAttributeValue.MapTo<ProductAttributeValue, VendorAttributeValueDto>();
         }
     }
 }

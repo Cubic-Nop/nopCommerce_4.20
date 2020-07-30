@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 namespace Nop.Plugin.Api.Models.ProductsParameters
 {
     // JsonProperty is used only for swagger
-    public class BaseProductsParametersModel
+    public class BaseVendorsParametersModel
     {
-        public BaseProductsParametersModel()
+        public BaseVendorsParametersModel()
         {
             CreatedAtMin = null;
             CreatedAtMax = null;

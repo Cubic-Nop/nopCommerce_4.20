@@ -1,13 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Seo;
+using Nop.Core.Domain.Stores;
 
 namespace Nop.Core.Domain.Vendors
 {
     /// <summary>
     /// Represents a vendor
     /// </summary>
-    public partial class Vendor : BaseEntity, ILocalizedEntity, ISlugSupported
+    public partial class Vendor : BaseEntity, ILocalizedEntity, ISlugSupported, IStoreMappingSupported
     {
         private ICollection<VendorNote> _vendorNotes;
 
@@ -25,7 +26,7 @@ namespace Nop.Core.Domain.Vendors
         /// Gets or sets the description
         /// </summary>
         public string Description { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the picture identifier
         /// </summary>
@@ -55,7 +56,7 @@ namespace Nop.Core.Domain.Vendors
         /// Gets or sets the display order
         /// </summary>
         public int DisplayOrder { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the meta keywords
         /// </summary>
@@ -94,5 +95,7 @@ namespace Nop.Core.Domain.Vendors
             get => _vendorNotes ?? (_vendorNotes = new List<VendorNote>());
             protected set => _vendorNotes = value;
         }
+        public bool LimitedToStores { get; set; } = false;
+
     }
 }

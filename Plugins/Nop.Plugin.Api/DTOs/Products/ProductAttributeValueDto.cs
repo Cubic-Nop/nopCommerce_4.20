@@ -8,7 +8,7 @@ namespace Nop.Plugin.Api.DTOs.Products
 {
     [JsonObject(Title = "attribute_value")]
     //[Validator(typeof(ProductDtoValidator))]
-    public class ProductAttributeValueDto : BaseDto
+    public class VendorAttributeValueDto : BaseDto
     {
         /// <summary>
         /// Gets or sets the attribute value type identifier

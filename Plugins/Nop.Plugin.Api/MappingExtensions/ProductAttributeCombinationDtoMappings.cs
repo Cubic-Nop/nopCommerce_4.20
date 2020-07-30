@@ -6,9 +6,9 @@ namespace Nop.Plugin.Api.MappingExtensions
 {
     public static class ProductAttributeCombinationDtoMappings
     {
-        public static ProductAttributeCombinationDto ToDto(this ProductAttributeCombination productAttributeCombination)
+        public static VendorAttributeCombinationDto ToDto(this ProductAttributeCombination productAttributeCombination)
         {
-            return productAttributeCombination.MapTo<ProductAttributeCombination, ProductAttributeCombinationDto>();
+            return productAttributeCombination.MapTo<ProductAttributeCombination, VendorAttributeCombinationDto>();
         }
     }
 }

@@ -21,8 +21,8 @@ namespace Nop.Plugin.Api.DTOs.Products
         private List<int> _manufacturerIds;
         private List<LocalizedNameDto> _localizedNames;
         private List<ImageMappingDto> _images;
-        private List<ProductAttributeMappingDto> _productAttributeMappings;
-        private List<ProductAttributeCombinationDto> _productAttributeCombinations;
+        private List<VendorAttributeMappingDto> _productAttributeMappings;
+        private List<VendorAttributeCombinationDto> _productAttributeCombinations;
         private List<ProductSpecificationAttributeDto> _productSpecificationAttributes;
         private List<int> _associatedProductIds;
         private List<string> _tags;
@@ -577,7 +577,7 @@ namespace Nop.Plugin.Api.DTOs.Products
         }
 
         [JsonProperty("attributes")]
-        public List<ProductAttributeMappingDto> ProductAttributeMappings
+        public List<VendorAttributeMappingDto> ProductAttributeMappings
         {
             get
             {
@@ -590,7 +590,7 @@ namespace Nop.Plugin.Api.DTOs.Products
         }
 
         [JsonProperty("product_attribute_combinations")]
-        public List<ProductAttributeCombinationDto> ProductAttributeCombinations
+        public List<VendorAttributeCombinationDto> ProductAttributeCombinations
         {
             get
             {
