@@ -302,7 +302,8 @@
                                     var categoryIdsInput = $('#@Html.IdFor(model => model.SelectedCategoryIds)').data("kendoMultiSelect");
                                     categoryIdsInput.setOptions({
                                         autoClose: false,
-                                        filter: "contains"
+                                        filter: "contains",
+                                        
                                     });
 
                                     @if (Model.AvailableCategories.Count == 0)

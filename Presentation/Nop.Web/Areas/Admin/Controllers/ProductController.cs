@@ -784,7 +784,7 @@ namespace Nop.Web.Areas.Admin.Controllers
 
             //prepare model
             var model = _productModelFactory.PrepareProductModel(new ProductModel(), null);
-
+       
             return View(model);
         }
 
