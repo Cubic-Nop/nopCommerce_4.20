@@ -564,6 +564,20 @@ namespace Nop.Services.Catalog
 
             return _productCategoryRepository.GetById(productCategoryId);
         }
+        public virtual List<ProductCategory> GetByProductId(int id)
+        {
+            if (id == 0)
+                return null;
+
+            var query = from pc in _productCategoryRepository.Table
+                        join c in _categoryRepository.Table on pc.CategoryId equals c.Id
+                        where pc.ProductId == id &&
+                              !c.Deleted
+                        orderby pc.DisplayOrder, pc.Id
+                        select pc;
+
+            return query.ToList();
+        }
 
         /// <summary>
         /// Inserts a product category mapping

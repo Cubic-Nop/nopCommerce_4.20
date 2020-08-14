@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 
@@ -125,7 +125,12 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="productCategory">>Product category mapping</param>
         void InsertProductCategory(ProductCategory productCategory);
-
+        /// <summary>
+        /// Gets a product category mapping collection
+        /// </summary>
+        /// <param name="productId">Product identifier</param>
+        /// <returns> Product category mapping collection</returns>
+        List<ProductCategory> GetByProductId(int id);
         /// <summary>
         /// Updates the product category mapping 
         /// </summary>

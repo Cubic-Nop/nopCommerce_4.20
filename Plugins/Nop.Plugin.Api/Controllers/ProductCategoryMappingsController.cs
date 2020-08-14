@@ -182,45 +182,80 @@ namespace Nop.Plugin.Api.Controllers
             {
                 return Error();
             }
-
-            var category = _categoryApiService.GetCategoryById(productCategoryDelta.Dto.CategoryId.Value);
-            if (category == null)
-            {
-                return Error(HttpStatusCode.NotFound, "category_id", "not found");
-            }
-
-            var product = _productApiService.GetProductById(productCategoryDelta.Dto.ProductId.Value);
+            var product = _productApiService.GetProductBySKU(productCategoryDelta.Dto.ProductSku);
             if (product == null)
             {
-                return Error(HttpStatusCode.NotFound, "product_id", "not found");
+                return Error(HttpStatusCode.NotFound, "product_sku", "not found");
             }
-
-            var mappingsCount = _productCategoryMappingsService.GetMappingsCount(product.Id, category.Id);
-
-            if (mappingsCount > 0)
+            var categories = _categoryService.GetByProductId(product.Id);
+            //delete
+            for (int i = 0; i < categories.Count; i++)
             {
-                return Error(HttpStatusCode.BadRequest, "product_category_mapping", "already exist");
+                if (!productCategoryDelta.Dto.Categories.Contains((int)categories[i].Category.CategoryId))
+                {
+                    _categoryService.DeleteProductCategory(categories[i]);
+                    //activity log 
+                    CustomerActivityService.InsertActivity("DeleteProductCategoryMapping", LocalizationService.GetResource("ActivityLog.DeleteProductCategoryMapping"), categories[i]);
+                }
             }
+            //insert
+            for (int i = 0; i < productCategoryDelta.Dto.Categories.Count; i++)
+            {
+                if (!categories.Any(l => l.Id == productCategoryDelta.Dto.Categories[i]))
+                {
+                    var cateTemp = _categoryApiService.GetCategoryByAXId(productCategoryDelta.Dto.Categories[i]);
+                    if (cateTemp != null)
+                    {
 
-            var newProductCategory = new ProductCategory();
-            productCategoryDelta.Merge(newProductCategory);
+                        var temp = new ProductCategory()
+                        {
+                            Id = 0,
+                            ProductId = product.Id,
+                            IsFeaturedProduct = productCategoryDelta.Dto.IsFeaturedProduct ?? false,
+                            DisplayOrder = productCategoryDelta.Dto.DisplayOrder ?? 0,
+                            CategoryId = cateTemp.Id
+                        };
+                        _categoryService.InsertProductCategory(temp);
+                        //activity log 
+                        CustomerActivityService.InsertActivity("AddNewProductCategoryMapping", LocalizationService.GetResource("ActivityLog.AddNewProductCategoryMapping"), temp);
+                    }
+                }
+            }
+            //var category = _categoryApiService.GetCategoryByAXId(productCategoryDelta.Dto.CategoryIdDynamics.Value);
+            //if (category == null)
+            //{
+            //    return Error(HttpStatusCode.NotFound, "category_id", "not found");
+            //}
+            //productCategoryDelta.Dto.CategoryId = category.Id;
 
-            //inserting new category
-            _categoryService.InsertProductCategory(newProductCategory);
 
-            // Preparing the result dto of the new product category mapping
-            var newProductCategoryMappingDto = newProductCategory.ToDto();
+            //var mappingsCount = _productCategoryMappingsService.GetMappingsCount(product.Id, category.Id);
 
-            var productCategoryMappingsRootObject = new ProductCategoryMappingsRootObject();
+            //if (mappingsCount > 0)
+            //{
+            //    return Error(HttpStatusCode.BadRequest, "product_category_mapping", "already exist");
+            //}
 
-            productCategoryMappingsRootObject.ProductCategoryMappingDtos.Add(newProductCategoryMappingDto);
+            //var newProductCategory = new ProductCategory();
+            //productCategoryDelta.Merge(newProductCategory);
+            //newProductCategory.ProductId = product.Id;
+            //newProductCategory.CategoryId = category.Id;
+            ////inserting new category
+            //_categoryService.InsertProductCategory(newProductCategory);
 
-            var json = JsonFieldsSerializer.Serialize(productCategoryMappingsRootObject, string.Empty);
+            //// Preparing the result dto of the new product category mapping
+            //var newProductCategoryMappingDto = newProductCategory.ToDto();
 
-            //activity log 
-            CustomerActivityService.InsertActivity("AddNewProductCategoryMapping", LocalizationService.GetResource("ActivityLog.AddNewProductCategoryMapping"), newProductCategory);
+            //var productCategoryMappingsRootObject = new ProductCategoryMappingsRootObject();
 
-            return new RawJsonActionResult(json);
+            //productCategoryMappingsRootObject.ProductCategoryMappingDtos.Add(newProductCategoryMappingDto);
+
+            //var json = JsonFieldsSerializer.Serialize(productCategoryMappingsRootObject, string.Empty);
+
+            ////activity log 
+            //CustomerActivityService.InsertActivity("AddNewProductCategoryMapping", LocalizationService.GetResource("ActivityLog.AddNewProductCategoryMapping"), newProductCategory);
+
+            return new RawJsonActionResult("Done");
         }
 
         [HttpPut]

@@ -11,6 +11,8 @@ namespace Nop.Plugin.Api.DTOs.Categories
     [JsonObject(Title = "category")]
     public class CategoryDto : BaseDto
     {
+
+      
         private ImageDto _imageDto;
         private List<LocalizedNameDto> _localizedNames;
         private List<int> _storeIds;
@@ -19,7 +21,10 @@ namespace Nop.Plugin.Api.DTOs.Categories
 
         [JsonProperty("name")]
         public string Name { get; set; }
-
+        [JsonProperty("categoryid")]
+        public int CategoryId { get; set; }
+        [JsonProperty("parentid")]
+        public int? ParentId { get; set; }
         /// <summary>
         /// Gets or sets the localized names
         /// </summary>

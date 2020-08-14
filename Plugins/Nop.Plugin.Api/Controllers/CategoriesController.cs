@@ -32,6 +32,7 @@ namespace Nop.Plugin.Api.Controllers
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using DTOs.Errors;
     using JSON.Serializers;
+    using Nop.Plugin.Api.MappingExtensions;
 
     //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CategoriesController : BaseApiController
@@ -155,7 +156,7 @@ namespace Nop.Plugin.Api.Controllers
                 return Error(HttpStatusCode.BadRequest, "id", "invalid id");
             }
 
-            var category = _categoryApiService.GetCategoryById(id);
+            var category = _categoryApiService.GetCategoryByAXId(id);
 
             if (category == null)
             {
@@ -205,7 +206,12 @@ namespace Nop.Plugin.Api.Controllers
             {
                 category.PictureId = insertedPicture.Id;
             }
-
+            if (categoryDelta.Dto.ParentId != null)
+            {
+                var temp = _categoryApiService.GetCategoryByAXId(categoryDelta.Dto.ParentId);
+                if (temp != null)
+                    category.ParentCategoryId = temp.Id;
+            }
             _categoryService.InsertCategory(category);
 
             
@@ -245,15 +251,15 @@ namespace Nop.Plugin.Api.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType(typeof(ErrorsRootObject), (int)HttpStatusCode.BadRequest)]
         public IActionResult UpdateCategory(
-            [ModelBinder(typeof (JsonModelBinder<CategoryDto>))] Delta<CategoryDto> categoryDelta)
+            [ModelBinder(typeof(JsonModelBinder<CategoryDto>))] Delta<CategoryDto> categoryDelta)
         {
             // Here we display the errors if the validation has failed at some point.
             if (!ModelState.IsValid)
             {
                 return Error();
             }
-
-            var category = _categoryApiService.GetCategoryById(categoryDelta.Dto.Id);
+            var category = _categoryApiService.GetCategoryByAXId(categoryDelta.Dto.CategoryId);
+            int tempId = category.Id;
 
             if (category == null)
             {
@@ -261,8 +267,20 @@ namespace Nop.Plugin.Api.Controllers
             }
 
             categoryDelta.Merge(category);
-
+            category.Id = tempId;
             category.UpdatedOnUtc = DateTime.UtcNow;
+            if (categoryDelta.Dto.ParentId != null)
+            {
+                if (categoryDelta.Dto.ParentId == 0)
+                {
+                    category.ParentCategoryId = 0;
+                }
+                else
+                {
+                    category.ParentCategoryId = category.Id;
+                }
+            }
+         
 
             _categoryService.UpdateCategory(category);
 

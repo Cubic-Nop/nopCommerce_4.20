@@ -40,7 +40,15 @@ namespace Nop.Plugin.Api.Services
 
             return new ApiList<Category>(query, page - 1, limit);
         }
+        public Category GetCategoryByAXId(int? categoryId)
+        {
+            if (categoryId == null && categoryId <= 0)
+                return null;
 
+            var category = _categoryRepository.Table.FirstOrDefault(cat => cat.CategoryId == categoryId && !cat.Deleted);
+
+            return category;
+        }
         public Category GetCategoryById(int id)
         {
             if (id <= 0)
@@ -115,5 +123,7 @@ namespace Nop.Plugin.Api.Services
 
             return query;
         }
+
+      
     }
 }

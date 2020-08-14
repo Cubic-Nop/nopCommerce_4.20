@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Discounts;
@@ -15,7 +15,10 @@ namespace Nop.Core.Domain.Catalog
     public partial class Category : BaseEntity, ILocalizedEntity, ISlugSupported, IAclSupported, IStoreMappingSupported, IDiscountSupported
     {
         private ICollection<DiscountCategoryMapping> _discountCategoryMappings;
-
+        /// <summary>
+        /// Gets or sets the CategoryId in 365
+        /// </summary>
+        public int? CategoryId { get; set; }
         /// <summary>
         /// Gets or sets the name
         /// </summary>

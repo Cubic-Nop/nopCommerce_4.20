@@ -22,12 +22,12 @@ namespace Nop.Plugin.Api.Validators
 
         private void SetCategoryIdRule()
         {
-            SetGreaterThanZeroCreateOrUpdateRule(p => p.CategoryId, "invalid category_id", "category_id");
+            SetGreaterThanZeroCreateOrUpdateRule(p => p.CategoryIdDynamics, "invalid category_id", "category_id");
         }
 
         private void SetProductIdRule()
         {
-            SetGreaterThanZeroCreateOrUpdateRule(p => p.ProductId, "invalid product_id", "product_id");
+            SetNotNullOrEmptyCreateOrUpdateRule(p => p.ProductSku, "invalid product_id", "product_id");
         }
 
         #endregion
