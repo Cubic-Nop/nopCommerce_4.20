@@ -16,6 +16,6 @@ namespace Nop.Plugin.Api.Services
 
         int GetCategoriesCount(DateTime? createdAtMin = null, DateTime? createdAtMax = null, DateTime? updatedAtMin = null, DateTime? updatedAtMax = null,
             bool? publishedStatus = null, int? productId = null);
-        Category GetCategoryByAXId(int? parentId);
+        Category GetCategoryByAXId(long? parentId);
     }
 }

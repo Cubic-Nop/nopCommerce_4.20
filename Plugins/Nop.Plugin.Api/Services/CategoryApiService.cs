@@ -40,7 +40,7 @@ namespace Nop.Plugin.Api.Services
 
             return new ApiList<Category>(query, page - 1, limit);
         }
-        public Category GetCategoryByAXId(int? categoryId)
+        public Category GetCategoryByAXId(long? categoryId)
         {
             if (categoryId == null && categoryId <= 0)
                 return null;

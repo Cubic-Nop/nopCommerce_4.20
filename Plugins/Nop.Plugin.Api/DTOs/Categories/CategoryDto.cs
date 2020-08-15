@@ -22,9 +22,9 @@ namespace Nop.Plugin.Api.DTOs.Categories
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("categoryid")]
-        public int CategoryId { get; set; }
+        public long CategoryId { get; set; }
         [JsonProperty("parentid")]
-        public int? ParentId { get; set; }
+        public long? ParentId { get; set; }
         /// <summary>
         /// Gets or sets the localized names
         /// </summary>

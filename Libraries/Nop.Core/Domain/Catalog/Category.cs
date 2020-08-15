@@ -18,7 +18,7 @@ namespace Nop.Core.Domain.Catalog
         /// <summary>
         /// Gets or sets the CategoryId in 365
         /// </summary>
-        public int? CategoryId { get; set; }
+        public long? CategoryId { get; set; }
         /// <summary>
         /// Gets or sets the name
         /// </summary>

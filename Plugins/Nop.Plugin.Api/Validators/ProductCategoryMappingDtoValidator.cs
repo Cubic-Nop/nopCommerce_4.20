@@ -12,7 +12,7 @@ namespace Nop.Plugin.Api.Validators
 
         public ProductCategoryMappingDtoValidator(IHttpContextAccessor httpContextAccessor, IJsonHelper jsonHelper, Dictionary<string, object> requestJsonDictionary) : base(httpContextAccessor, jsonHelper, requestJsonDictionary)
         {
-            SetCategoryIdRule();
+            //SetCategoryIdRule();
             SetProductIdRule();
         }
 
@@ -20,14 +20,14 @@ namespace Nop.Plugin.Api.Validators
 
         #region Private Methods
 
-        private void SetCategoryIdRule()
-        {
-            SetGreaterThanZeroCreateOrUpdateRule(p => p.CategoryIdDynamics, "invalid category_id", "category_id");
-        }
+        //private void SetCategoryIdRule()
+        //{
+        //    SetGreaterThanZeroCreateOrUpdateRule(p => p.CategoryIdDynamics, "invalid category_id", "category_id");
+        //}
 
         private void SetProductIdRule()
         {
-            SetNotNullOrEmptyCreateOrUpdateRule(p => p.ProductSku, "invalid product_id", "product_id");
+            SetNotNullOrEmptyCreateOrUpdateRule(p => p.ProductSku, "invalid product_sku", "product_sku");
         }
 
         #endregion

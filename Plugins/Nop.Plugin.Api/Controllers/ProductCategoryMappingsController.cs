@@ -191,7 +191,7 @@ namespace Nop.Plugin.Api.Controllers
             //delete
             for (int i = 0; i < categories.Count; i++)
             {
-                if (!productCategoryDelta.Dto.Categories.Contains((int)categories[i].Category.CategoryId))
+                if (categories[i].Category.CategoryId == null || !productCategoryDelta.Dto.Categories.Contains((int)categories[i].Category.CategoryId) || categories[i].Category.CategoryId == null)
                 {
                     _categoryService.DeleteProductCategory(categories[i]);
                     //activity log 

@@ -9,10 +9,10 @@ namespace Nop.Plugin.Api.DTOs.ProductCategoryMappings
     {
         public ProductCategoryMappingDto()
         {
-            Categories = new List<int>();
+            Categories = new List<long>();
         }
         [JsonProperty("categories")]
-        public List<int> Categories { get; set; }
+        public List<long> Categories { get; set; }
         /// <summary>
         /// Gets or sets the SKU
         /// </summary>
