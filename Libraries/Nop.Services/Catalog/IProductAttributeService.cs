@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 
@@ -201,6 +201,8 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="combination">Product attribute combination</param>
         void UpdateProductAttributeCombination(ProductAttributeCombination combination);
+        ProductAttributeMapping GetProductAttributeByAXId(long attributeId);
+        ProductAttribute GetProductAttributeByName(string attributeName);
 
         #endregion
     }

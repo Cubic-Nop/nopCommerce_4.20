@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Nop.Plugin.Api.DTOs.ProductAttributes
+namespace Nop.Plugin.Api.DTOs.CustomeProductAttributes
 {
     public class CustomeProductAttributesRootObjectDto : ISerializableObject
     {
         public CustomeProductAttributesRootObjectDto()
         {
-            ProductAttributes = new List<CustomeProductAttributes>();
+            ProductAttributes = new List<CustomeProductAttributesDto>();
         }
 
         [JsonProperty("product_attributes")]
-        public IList<CustomeProductAttributes> ProductAttributes { get; set; }
+        public IList<CustomeProductAttributesDto> ProductAttributes { get; set; }
 
         public string GetPrimaryPropertyName()
         {
@@ -21,7 +21,7 @@ namespace Nop.Plugin.Api.DTOs.ProductAttributes
 
         public Type GetPrimaryPropertyType()
         {
-            return typeof (CustomeProductAttributes);
+            return typeof (CustomeProductAttributesDto);
         }
     }
 }

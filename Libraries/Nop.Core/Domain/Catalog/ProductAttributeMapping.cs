@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nop.Core.Domain.Localization;
 
 namespace Nop.Core.Domain.Catalog
@@ -14,6 +14,10 @@ namespace Nop.Core.Domain.Catalog
         /// Gets or sets the product identifier
         /// </summary>
         public int ProductId { get; set; }
+        /// <summary>
+        /// Gets or sets attribute Id 365
+        /// </summary>
+        public long? AttrIdAX { get; set; }
 
         /// <summary>
         /// Gets or sets the product attribute identifier

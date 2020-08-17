@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nop.Core;
@@ -211,9 +211,9 @@ namespace Nop.Services.Catalog
                 return _cacheManager.Get(allCacheKey, () =>
                 {
                     var query = from pam in _productAttributeMappingRepository.Table
-                        orderby pam.DisplayOrder, pam.Id
-                        where pam.ProductId == productId
-                        select pam;
+                                orderby pam.DisplayOrder, pam.Id
+                                where pam.ProductId == productId
+                                select pam;
                     var productAttributeMappings = query.ToList();
                     return productAttributeMappings;
                 });
@@ -627,6 +627,28 @@ namespace Nop.Services.Catalog
             _eventPublisher.EntityUpdated(combination);
         }
 
+        public ProductAttributeMapping GetProductAttributeByAXId(long attributeId)
+        {
+            if (attributeId == 0)
+                return null;
+
+            var query = from pac in _productAttributeMappingRepository.Table
+
+                        where pac.AttrIdAX == attributeId
+                        select pac;
+            return query.FirstOrDefault();
+        }
+
+        public ProductAttribute GetProductAttributeByName(string attributeName)
+        {
+            if (string.IsNullOrEmpty(attributeName))
+                return null;
+
+            var query = from pac in _productAttributeRepository.Table
+                        where pac.Name.ToLower().Trim() == attributeName.ToLower().Trim()
+                        select pac;
+            return query.FirstOrDefault();
+        }
         #endregion
 
         #endregion

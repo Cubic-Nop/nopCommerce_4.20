@@ -220,7 +220,7 @@ namespace Nop.Plugin.Api.Helpers
             return languageDto;
         }
 
-        public ProductAttributeDto PrepareProductAttributeDTO(ProductAttribute productAttribute)
+        public CustomeProductAttributes PrepareProductAttributeDTO(ProductAttribute productAttribute)
         {
             return productAttribute.ToDto();
         }

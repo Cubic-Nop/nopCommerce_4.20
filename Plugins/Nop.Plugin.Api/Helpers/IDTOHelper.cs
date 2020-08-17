@@ -27,7 +27,7 @@ namespace Nop.Plugin.Api.Helpers
         OrderItemDto PrepareOrderItemDTO(OrderItem orderItem);
         StoreDto PrepareStoreDTO(Store store);
         LanguageDto PrepateLanguageDto(Language language);
-        ProductAttributeDto PrepareProductAttributeDTO(ProductAttribute productAttribute);
+        CustomeProductAttributes PrepareProductAttributeDTO(ProductAttribute productAttribute);
         ProductSpecificationAttributeDto PrepareProductSpecificationAttributeDto(ProductSpecificationAttribute productSpecificationAttribute);
         SpecificationAttributeDto PrepareSpecificationAttributeDto(SpecificationAttribute specificationAttribute);
         ManufacturerDto PrepareManufacturerDto(Manufacturer manufacturer);

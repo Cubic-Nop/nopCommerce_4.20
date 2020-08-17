@@ -31,6 +31,7 @@ namespace Nop.Plugin.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using DTOs.Errors;
     using JSON.Serializers;
+    using Nop.Plugin.Api.DTOs.CustomeProductAttributes;
 
     //[ApiAuthorize(Policy = JwtBearerDefaults.AuthenticationScheme, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProductsController : BaseApiController
@@ -177,7 +178,119 @@ namespace Nop.Plugin.Api.Controllers
 
             return new RawJsonActionResult(json);
         }
+        [HttpPost]
+        [Route("/api/productattrs")]
+        [ProducesResponseType(typeof(ProductsRootObjectDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(ErrorsRootObject), 422)]
+        public IActionResult CreateProductAttrs([ModelBinder(typeof(JsonModelBinder<CustomeProductAttributesDto>))] Delta<CustomeProductAttributesDto> customeProductAttributesDtoDelta)
+        {
+            // Here we display the errors if the validation has failed at some point.
+            if (!ModelState.IsValid)
+            {
+                return Error();
+            }
+            var list = _productAttributeService.GetAllProductAttributes().Select(l => l.Name.ToLower().Trim()).ToList();
+            if (!list.Contains(customeProductAttributesDtoDelta.Dto.AttributeName.ToLower().Trim()))
+            {
+                var productAttribute = new ProductAttribute()
+                {
+                    Description = customeProductAttributesDtoDelta.Dto.Description,
+                    Id = 0,
+                    Name = customeProductAttributesDtoDelta.Dto.AttributeName
+                };
+                _productAttributeService.InsertProductAttribute(productAttribute);
+                CustomerActivityService.InsertActivity("AddNewProductAttribute", LocalizationService.GetResource("ActivityLog.AddNewProductAttribute"), productAttribute);
+            }
+            //get Product By SKU
+            var product = _productService.GetProductBySku(customeProductAttributesDtoDelta.Dto.Sku);
+            if (product == null)
+            {
+                return Error(HttpStatusCode.NotFound, "product", "not found");
+            }
+            var attr = _productAttributeService.GetProductAttributeByAXId(customeProductAttributesDtoDelta.Dto.AttributeId);
+            if (attr == null)
+            {
+                var prodAttr = _productAttributeService.GetProductAttributeByName(customeProductAttributesDtoDelta.Dto.AttributeName);
+                //create
+                var tempAttr = new ProductAttributeMapping()
+                {
+                    AttrIdAX = customeProductAttributesDtoDelta.Dto.AttributeId,
+                    AttributeControlType = AttributeControlType.DropdownList,
+                    ProductId = product.Id,
+                    ProductAttributeId = prodAttr.Id,
+                    IsRequired = true,
+                };
+                _productAttributeService.InsertProductAttributeMapping(tempAttr);
+                //
+                foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
+                {
 
+                    _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                    {
+                        Id = 0,
+                        ProductAttributeMappingId = tempAttr.Id,
+                        Name = item.Text,
+                        PriceAdjustment = item.Price,
+                        DisplayOrder = item.DisplayOrder,
+                    });
+                }
+            }
+            else
+            {
+                var prodAttr = _productAttributeService.GetProductAttributeByName(customeProductAttributesDtoDelta.Dto.AttributeName);
+                //edit
+                attr.ProductAttributeId = prodAttr.Id;
+                _productAttributeService.UpdateProductAttributeMapping(attr);
+                //
+                var listofValues = _productAttributeService.GetProductAttributeValues(attr.Id);
+                //delete
+                foreach (var item in listofValues)
+                {
+                    _productAttributeService.DeleteProductAttributeValue(item);
+                }
+                foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
+                {
+
+                    _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                    {
+                        Id = 0,
+                        ProductAttributeMappingId = attr.Id,
+                        Name = item.Text,
+                        PriceAdjustment = item.Price,
+                        DisplayOrder = item.DisplayOrder,
+                    });
+                }
+
+            }
+
+            var customeProductAttributesRootObjectDto = new CustomeProductAttributesRootObjectDto();
+            customeProductAttributesRootObjectDto.ProductAttributes.Add(new CustomeProductAttributesDto()
+            {
+                AttributeId = 123456,
+                AttributeName = "Test",
+                Description = "Test",
+                Sku = "1200",
+                Values = new List<ValueDto>() {
+                new ValueDto(){
+                    DisplayOrder=0,
+                Price=1222,
+                Text="Test"}
+                ,
+                new ValueDto()
+                {
+                    DisplayOrder = 0,
+                    Price = 1222,
+                    Text = "Test"
+                }
+
+            }
+            });
+
+            var json = JsonFieldsSerializer.Serialize(customeProductAttributesRootObjectDto, string.Empty);
+
+            return new RawJsonActionResult("Done");
+        }
         [HttpPost]
         [Route("/api/products")]
         [ProducesResponseType(typeof(ProductsRootObjectDto), (int)HttpStatusCode.OK)]

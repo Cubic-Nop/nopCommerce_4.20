@@ -4,7 +4,7 @@ using Nop.Plugin.Api.DTOs.Base;
 namespace Nop.Plugin.Api.DTOs.ProductAttributes
 {
     [JsonObject(Title = "product_attribute")]
-    public class ProductAttributeDto : BaseDto
+    public class CustomeProductAttributes : BaseDto
     {
         /// <summary>
         /// Gets or sets the name

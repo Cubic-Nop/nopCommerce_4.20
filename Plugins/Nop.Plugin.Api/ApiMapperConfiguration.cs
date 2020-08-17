@@ -74,7 +74,7 @@ namespace Nop.Plugin.Api
 
             CreateMap<ProductAttributeValue, VendorAttributeValueDto>();
 
-            CreateMap<ProductAttribute, ProductAttributeDto>();
+            CreateMap<ProductAttribute, CustomeProductAttributes>();
 
             CreateMap<ProductSpecificationAttribute, ProductSpecificationAttributeDto>();
 
