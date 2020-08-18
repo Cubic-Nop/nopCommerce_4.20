@@ -211,57 +211,67 @@ namespace Nop.Plugin.Api.Controllers
             var attr = _productAttributeService.GetProductAttributeByAXId(customeProductAttributesDtoDelta.Dto.AttributeId);
             if (attr == null)
             {
-                var prodAttr = _productAttributeService.GetProductAttributeByName(customeProductAttributesDtoDelta.Dto.AttributeName);
-                //create
-                var tempAttr = new ProductAttributeMapping()
+                if (customeProductAttributesDtoDelta.Dto.Values.Count > 0)
                 {
-                    AttrIdAX = customeProductAttributesDtoDelta.Dto.AttributeId,
-                    AttributeControlType = AttributeControlType.DropdownList,
-                    ProductId = product.Id,
-                    ProductAttributeId = prodAttr.Id,
-                    IsRequired = true,
-                };
-                _productAttributeService.InsertProductAttributeMapping(tempAttr);
-                //
-                foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
-                {
-
-                    _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                    var prodAttr = _productAttributeService.GetProductAttributeByName(customeProductAttributesDtoDelta.Dto.AttributeName);
+                    //create
+                    var tempAttr = new ProductAttributeMapping()
                     {
-                        Id = 0,
-                        ProductAttributeMappingId = tempAttr.Id,
-                        Name = item.Text,
-                        PriceAdjustment = item.Price,
-                        DisplayOrder = item.DisplayOrder,
-                    });
+                        AttrIdAX = customeProductAttributesDtoDelta.Dto.AttributeId,
+                        AttributeControlType = AttributeControlType.DropdownList,
+                        ProductId = product.Id,
+                        ProductAttributeId = prodAttr.Id,
+                        IsRequired = true,
+                    };
+                    _productAttributeService.InsertProductAttributeMapping(tempAttr);
+                    //
+                    foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
+                    {
+
+                        _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                        {
+                            Id = 0,
+                            ProductAttributeMappingId = tempAttr.Id,
+                            Name = item.Text,
+                            PriceAdjustment = item.Price,
+                            DisplayOrder = item.DisplayOrder,
+                        });
+                    }
                 }
             }
             else
             {
                 var prodAttr = _productAttributeService.GetProductAttributeByName(customeProductAttributesDtoDelta.Dto.AttributeName);
-                //edit
-                attr.ProductAttributeId = prodAttr.Id;
-                _productAttributeService.UpdateProductAttributeMapping(attr);
-                //
-                var listofValues = _productAttributeService.GetProductAttributeValues(attr.Id);
-                //delete
-                foreach (var item in listofValues)
+                if (customeProductAttributesDtoDelta.Dto.Values.Count == 0)
                 {
-                    _productAttributeService.DeleteProductAttributeValue(item);
+                    _productAttributeService.DeleteProductAttributeMapping(attr);
                 }
-                foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
+                else
                 {
-
-                    _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                    //edit
+                    attr.ProductAttributeId = prodAttr.Id;
+                    _productAttributeService.UpdateProductAttributeMapping(attr);
+                    //
+                    var listofValues = _productAttributeService.GetProductAttributeValues(attr.Id);
+                    //delete
+                    foreach (var item in listofValues)
                     {
-                        Id = 0,
-                        ProductAttributeMappingId = attr.Id,
-                        Name = item.Text,
-                        PriceAdjustment = item.Price,
-                        DisplayOrder = item.DisplayOrder,
-                    });
-                }
+                        _productAttributeService.DeleteProductAttributeValue(item);
+                    }
+                    foreach (var item in customeProductAttributesDtoDelta.Dto.Values)
+                    {
 
+                        _productAttributeService.InsertProductAttributeValue(new ProductAttributeValue()
+                        {
+                            Id = 0,
+                            ProductAttributeMappingId = attr.Id,
+                            Name = item.Text,
+                            PriceAdjustment = item.Price,
+                            DisplayOrder = item.DisplayOrder,
+                        });
+                    }
+
+                }
             }
 
             var customeProductAttributesRootObjectDto = new CustomeProductAttributesRootObjectDto();
