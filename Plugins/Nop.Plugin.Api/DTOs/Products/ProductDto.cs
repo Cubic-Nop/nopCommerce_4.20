@@ -645,6 +645,8 @@ namespace Nop.Plugin.Api.DTOs.Products
         [ValidateVendor]
         [JsonProperty("vendor_id")]
         public int? VendorId { get; set; }
+        [JsonProperty("vendorname")]
+        public string VName { get; set; }
 
         [JsonProperty("se_name")]
         public string SeName { get; set; }

@@ -37,9 +37,9 @@ namespace Nop.Plugin.Api.Services
 
             return new ApiList<Vendor>(query, page - 1, limit);
         }
-        
-        public int GetVendorsCount(DateTime? createdAtMin = null, DateTime? createdAtMax = null, 
-            DateTime? updatedAtMin = null, DateTime? updatedAtMax = null, bool? publishedStatus = null, string vendorName = null, 
+
+        public int GetVendorsCount(DateTime? createdAtMin = null, DateTime? createdAtMax = null,
+            DateTime? updatedAtMin = null, DateTime? updatedAtMax = null, bool? publishedStatus = null, string vendorName = null,
             int? categoryId = null)
         {
             var query = GetVendorsQuery(createdAtMin, createdAtMax, updatedAtMin, updatedAtMax, vendorName,
@@ -70,10 +70,10 @@ namespace Nop.Plugin.Api.Services
             return _vendorRepository.Table.FirstOrDefault(Vendor => Vendor.Id == VendorId && !Vendor.Deleted);
         }
 
-        private IQueryable<Vendor> GetVendorsQuery(DateTime? createdAtMin = null, DateTime? createdAtMax = null, 
-            DateTime? updatedAtMin = null, DateTime? updatedAtMax = null, string vendorName = null, 
+        private IQueryable<Vendor> GetVendorsQuery(DateTime? createdAtMin = null, DateTime? createdAtMax = null,
+            DateTime? updatedAtMin = null, DateTime? updatedAtMax = null, string vendorName = null,
             bool? publishedStatus = null, IList<int> ids = null, int? categoryId = null)
-            
+
         {
             var query = _vendorRepository.Table;
 
@@ -82,16 +82,16 @@ namespace Nop.Plugin.Api.Services
                 query = query.Where(c => ids.Contains(c.Id));
             }
 
-         
+
 
             // always return Vendors that are not deleted!!!
             query = query.Where(c => !c.Deleted);
 
-           
+
 
             if (!string.IsNullOrEmpty(vendorName))
             {
-                query = from vendor in _vendorRepository.Table 
+                query = from vendor in _vendorRepository.Table
                         where vendor.Name == vendorName && !vendor.Deleted && vendor.Active
                         select vendor;
             }
@@ -99,6 +99,14 @@ namespace Nop.Plugin.Api.Services
             query = query.OrderBy(Vendor => Vendor.Id);
 
             return query;
+        }
+
+        public Vendor GetVendorByName(string vendorName)
+        {
+            if (string.IsNullOrEmpty(vendorName))
+                return null;
+
+            return _vendorRepository.Table.FirstOrDefault(vendor => vendor.Name == vendorName && !vendor.Deleted);
         }
     }
 }

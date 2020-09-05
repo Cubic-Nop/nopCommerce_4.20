@@ -20,6 +20,7 @@ namespace Nop.Plugin.Api.Services
         Vendor GetVendorById(int VendorId);
 
         Vendor GetVendorByIdNoTracking(int VendorId);
+        Vendor GetVendorByName(string vendorName);
         //Vendor GetVendorBySKU(string sku);
     }
 }

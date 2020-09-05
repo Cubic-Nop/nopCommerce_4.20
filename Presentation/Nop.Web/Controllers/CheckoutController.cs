@@ -22,6 +22,7 @@ using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Shipping;
+using Nop.Services.Vendors;
 using Nop.Web.Extensions;
 using Nop.Web.Factories;
 using Nop.Web.Framework.Controllers;
@@ -60,7 +61,7 @@ namespace Nop.Web.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
-
+        private readonly IVendorService _vendorService;
         #endregion
 
         #region Ctor
@@ -85,11 +86,12 @@ namespace Nop.Web.Controllers
             IStoreContext storeContext,
             IWebHelper webHelper,
             IWorkContext workContext,
-            OrderSettings orderSettings,
+            OrderSettings orderSettings, IVendorService vendorService,
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings)
         {
+            _vendorService = vendorService;
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
             _addressAttributeParser = addressAttributeParser;
@@ -150,7 +152,7 @@ namespace Nop.Web.Controllers
             //in order to avoid any possible limitations by payment gateway we reset GUID periodically
             var previousPaymentRequest = HttpContext.Session.Get<ProcessPaymentRequest>("OrderPaymentInfo");
             if (_paymentSettings.RegenerateOrderGuidInterval > 0 &&
-                previousPaymentRequest != null && 
+                previousPaymentRequest != null &&
                 previousPaymentRequest.OrderGuidGeneratedOnUtc.HasValue)
             {
                 var interval = DateTime.UtcNow - previousPaymentRequest.OrderGuidGeneratedOnUtc.Value;
@@ -1781,18 +1783,19 @@ namespace Nop.Web.Controllers
             var _obj = JsonConvert.SerializeObject(new CustomeCheckOut()
             {
                 CustomerId = postProcessPaymentRequest.Order.CustomerId,
+                CustomerAccount = postProcessPaymentRequest.Order.Customer.AccountNum,
                 CustomeProducts = postProcessPaymentRequest.Order.OrderItems.Select(l => new CutomeProduct()
                 {
                     Price = l.Product.Price,
                     Qunatity = l.Quantity,
-                    SKU = l.Product.Sku
+                    SKU = l.Product.Sku,
+                    VendorIdAX = _vendorService.GetVendorById(l.Product.VendorId)?.Name,
+                    VendorId = l.Product.VendorId
                 }).ToList()
             });
             var uri = "http://localhost:5432/api/Sales";
             //var uri = "https://prod-73.westeurope.logic.azure.com/workflows/075bbebb9a1046938ffd56fa32fd0e02/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WJX_4yZwWf8d9iXScGvHME8lcYZiRXtz6OdHqtJCwd4";
             await _client.PostAsync(uri, new StringContent(_obj, Encoding.UTF8, "application/json"));
-
-
         }
 
         #endregion

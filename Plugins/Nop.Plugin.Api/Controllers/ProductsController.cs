@@ -37,6 +37,7 @@ namespace Nop.Plugin.Api.Controllers
     public class ProductsController : BaseApiController
     {
         private readonly IProductApiService _productApiService;
+        private readonly IVendorApiService _vendorApiService;
         private readonly IProductService _productService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IManufacturerService _manufacturerService;
@@ -45,7 +46,7 @@ namespace Nop.Plugin.Api.Controllers
         private readonly IProductAttributeService _productAttributeService;
         private readonly IDTOHelper _dtoHelper;
 
-        public ProductsController(IProductApiService productApiService,
+        public ProductsController(IProductApiService productApiService, IVendorApiService vendorApiService,
                                   IJsonFieldsSerializer jsonFieldsSerializer,
                                   IProductService productService,
                                   IUrlRecordService urlRecordService,
@@ -64,6 +65,7 @@ namespace Nop.Plugin.Api.Controllers
                                   IDTOHelper dtoHelper) : base(jsonFieldsSerializer, aclService, customerService, storeMappingService, storeService, discountService, customerActivityService, localizationService, pictureService)
         {
             _productApiService = productApiService;
+            _vendorApiService = vendorApiService;
             _factory = factory;
             _manufacturerService = manufacturerService;
             _productTagService = productTagService;
@@ -317,7 +319,11 @@ namespace Nop.Plugin.Api.Controllers
             // Inserting the new product
             var product = _factory.Initialize();
             productDelta.Merge(product);
-
+            var vendor = _vendorApiService.GetVendorByName(productDelta.Dto.VName);
+            if (vendor != null)
+            {
+                product.VendorId = vendor.Id;
+            }
             _productService.InsertProduct(product);
 
             UpdateProductPictures(product, productDelta.Dto.Images);
@@ -381,6 +387,11 @@ namespace Nop.Plugin.Api.Controllers
 
             product.UpdatedOnUtc = DateTime.UtcNow;
             product.Id = id;
+            var vendor = _vendorApiService.GetVendorByName(productDelta.Dto.VName);
+            if (vendor != null)
+            {
+                product.VendorId = vendor.Id;
+            }
             _productService.UpdateProduct(product);
 
             UpdateProductAttributes(product, productDelta);

@@ -11,7 +11,7 @@ namespace Nop.Services.Orders
         public string CustomerAccount { get; set; } = "US-001";
         public ICollection<CutomeProduct> CustomeProducts { get; set; }
         public string ShippingSiteId { get; set; } = "2";
-        public string ShippingWarehouseId { get; set; } = "24";
+        public string ShippingWarehouseId { get; set; } = "22";
         public CustomeCheckOut()
         {
             CustomeProducts = new HashSet<CutomeProduct>();
@@ -24,6 +24,6 @@ namespace Nop.Services.Orders
         public decimal Price { get; set; }
         public int Qunatity { get; set; }
         public int VendorId { get; set; }
-        public string VendorIdAX { get; set; } = "USMF";
+        public string VendorIdAX { get; set; }
     }
 }
