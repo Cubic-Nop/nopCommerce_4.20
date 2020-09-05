@@ -1788,7 +1788,8 @@ namespace Nop.Web.Controllers
                     SKU = l.Product.Sku
                 }).ToList()
             });
-            var uri = "https://prod-73.westeurope.logic.azure.com/workflows/075bbebb9a1046938ffd56fa32fd0e02/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WJX_4yZwWf8d9iXScGvHME8lcYZiRXtz6OdHqtJCwd4";
+            var uri = "http://localhost:5432/api/Sales";
+            //var uri = "https://prod-73.westeurope.logic.azure.com/workflows/075bbebb9a1046938ffd56fa32fd0e02/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WJX_4yZwWf8d9iXScGvHME8lcYZiRXtz6OdHqtJCwd4";
             await _client.PostAsync(uri, new StringContent(_obj, Encoding.UTF8, "application/json"));
 
 

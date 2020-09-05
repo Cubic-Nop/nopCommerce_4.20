@@ -143,12 +143,12 @@ namespace Nop.Services.Messages
             //send email
             using (var smtpClient = new SmtpClient())
             {
-                smtpClient.UseDefaultCredentials = emailAccount.UseDefaultCredentials;
+                smtpClient.UseDefaultCredentials = false;
                 smtpClient.Host = emailAccount.Host;
                 smtpClient.Port = emailAccount.Port;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtpClient.EnableSsl = emailAccount.EnableSsl;
-                smtpClient.Credentials = emailAccount.UseDefaultCredentials ?
-                    CredentialCache.DefaultNetworkCredentials :
+                smtpClient.Credentials =
                     new NetworkCredential(emailAccount.Username, emailAccount.Password);
                 smtpClient.Send(message);
             }

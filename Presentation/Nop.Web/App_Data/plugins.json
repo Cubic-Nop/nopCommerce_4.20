@@ -17,8 +17,7 @@
     "Widgets.NivoSlider",
     "ExternalAuth.Facebook",
     "Nop.Plugin.Api",
-    "Payments.CashOnDelivery",
-    "Shipping.ShipStation"
+    "Payments.CashOnDelivery"
   ],
   "PluginNamesToUninstall": [],
   "PluginNamesToDelete": [],
