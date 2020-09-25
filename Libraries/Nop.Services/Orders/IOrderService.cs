@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
@@ -32,6 +32,7 @@ namespace Nop.Services.Orders
         /// <param name="orderIds">Order identifiers</param>
         /// <returns>Order</returns>
         IList<Order> GetOrdersByIds(int[] orderIds);
+        IList<Order> GetOrdersNotContainsAxId();
 
         /// <summary>
         /// Gets an order

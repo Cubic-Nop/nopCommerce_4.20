@@ -255,7 +255,7 @@ namespace Nop.Plugin.Api.Controllers
                 }
                 newCustomer.Addresses.Add(address.ToEntity());
             }
-            
+            newCustomer.RequireChangePassword = true;
             CustomerService.InsertCustomer(newCustomer);
 
             InsertFirstAndLastNameGenericAttributes(customerDelta.Dto.FirstName, customerDelta.Dto.LastName, newCustomer);

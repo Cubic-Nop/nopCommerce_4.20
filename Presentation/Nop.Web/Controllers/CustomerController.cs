@@ -419,6 +419,11 @@ namespace Nop.Web.Controllers
                             _customerActivityService.InsertActivity(customer, "PublicStore.Login",
                                 _localizationService.GetResource("ActivityLog.PublicStore.Login"), customer);
 
+                            if (customer.RequireChangePassword)
+                            {
+                                return RedirectToAction("ChangePassword");
+                            }
+
                             if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
                                 return RedirectToRoute("Homepage");
 

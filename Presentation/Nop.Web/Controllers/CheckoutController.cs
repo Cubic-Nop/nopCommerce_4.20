@@ -1694,7 +1694,13 @@ namespace Nop.Web.Controllers
 
                     _paymentService.PostProcessPayment(postProcessPaymentRequest);
                     //success
-                    Task.Run(async () => await SendOrder(postProcessPaymentRequest));
+                    var axLink = Task.Run(async () => await SendOrder(postProcessPaymentRequest)).Result;
+                    var currentOrder = _orderService.GetOrderById(postProcessPaymentRequest.Order.Id);
+                    if (!string.IsNullOrEmpty(axLink))
+                    {
+                        currentOrder.AXLink = axLink;
+                        _orderService.UpdateOrder(currentOrder);
+                    }
                     return Json(new { success = 1 });
                 }
 
@@ -1777,7 +1783,7 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Custome API Check Out
-        private async Task SendOrder(PostProcessPaymentRequest postProcessPaymentRequest)
+        private async Task<string> SendOrder(PostProcessPaymentRequest postProcessPaymentRequest)
         {
 
             var _obj = JsonConvert.SerializeObject(new CustomeCheckOut()
@@ -1795,7 +1801,9 @@ namespace Nop.Web.Controllers
             });
             var uri = "http://localhost:5432/api/Sales";
             //var uri = "https://prod-73.westeurope.logic.azure.com/workflows/075bbebb9a1046938ffd56fa32fd0e02/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WJX_4yZwWf8d9iXScGvHME8lcYZiRXtz6OdHqtJCwd4";
-            await _client.PostAsync(uri, new StringContent(_obj, Encoding.UTF8, "application/json"));
+            HttpResponseMessage response = await _client.PostAsync(uri, new StringContent(_obj, Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
         #endregion

@@ -319,7 +319,7 @@ namespace Nop.Services.Customers
                 result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.EmailNotFound"));
                 return result;
             }
-          
+
             //request isn't valid
             if (request.ValidateRequest && !PasswordsMatch(_customerService.GetCurrentPassword(customer.Id), request.OldPassword))
             {
@@ -363,9 +363,12 @@ namespace Nop.Services.Customers
                         request.HashedPasswordFormat ?? _customerSettings.HashedPasswordFormat);
                     break;
             }
-
+            if (customer.RequireChangePassword)
+            {
+                customer.RequireChangePassword = false;
+                _customerService.UpdateCustomer(customer);
+            }
             _customerService.InsertCustomerPassword(customerPassword);
-
             //publish event
             _eventPublisher.Publish(new CustomerPasswordChangedEvent(customerPassword));
 

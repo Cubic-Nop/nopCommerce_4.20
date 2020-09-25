@@ -96,6 +96,8 @@ namespace Nop.Core.Domain.Customers
         /// </summary>
         public bool Active { get; set; }
 
+        public bool RequireChangePassword { get; set; } = false;
+
         /// <summary>
         /// Gets or sets a value indicating whether the customer has been deleted
         /// </summary>

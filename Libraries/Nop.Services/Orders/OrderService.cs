@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -104,6 +104,16 @@ namespace Nop.Services.Orders
             }
 
             return sortedOrders;
+        }
+        public virtual IList<Order> GetOrdersNotContainsAxId()
+        {
+
+            var query = from o in _orderRepository.Table
+                        where string.IsNullOrEmpty(o.AXLink) == false && !o.Deleted
+                        select o;
+            var orders = query.ToList();
+
+            return orders;
         }
 
         /// <summary>

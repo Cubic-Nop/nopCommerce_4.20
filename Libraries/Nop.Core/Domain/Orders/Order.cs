@@ -28,6 +28,11 @@ namespace Nop.Core.Domain.Orders
         public Guid OrderGuid { get; set; }
 
         /// <summary>
+        /// Gets or sets the AxId identifier
+        /// </summary>
+        public string AXLink{ get; set; }
+
+        /// <summary>
         /// Gets or sets the store identifier
         /// </summary>
         public int StoreId { get; set; }
