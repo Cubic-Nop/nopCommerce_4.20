@@ -8,10 +8,10 @@ namespace Nop.Services.Orders
     public class CustomeCheckOut
     {
         public int CustomerId { get; set; }
-        public string CustomerAccount { get; set; } = "US-001";
+        public string CustomerAccount { get; set; }
         public ICollection<CutomeProduct> CustomeProducts { get; set; }
         public string ShippingSiteId { get; set; } = "2";
-        public string ShippingWarehouseId { get; set; } = "22";
+        public string ShippingWarehouseId { get; set; } = "24";
         public CustomeCheckOut()
         {
             CustomeProducts = new HashSet<CutomeProduct>();
